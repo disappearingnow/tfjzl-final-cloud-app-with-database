@@ -81,9 +81,22 @@ class Question(models.Model):
     text  = models.CharField(max_length=200)
     grade = models.IntegerField(default=50)
 
+    # method to calculate if the learner gets the score of the question
+    def is_get_score(self, selected_ids):
+        all_answers = self.choice_set.filter(is_correct=True).count()
+        selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
+        return all_answers == selected_correct
+
+
     def __str__(self):
             return "Question: " + self.text
 
+
+#Choice model
+class Choice(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    text = models.CharField(max_length=200)
+    is_correct = models.BooleanField(default=False)
 
 # Enrollment model
 # <HINT> Once a user enrolled a class, an enrollment entry should be created between the user and course
